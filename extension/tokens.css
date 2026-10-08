@@ -1,0 +1,253 @@
+/* Shared design tokens and focus styles for every extension page. Link it before the page stylesheet. */
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light dark;
+
+  /* Design tokens: Bilibili's palette (pink #ff6699, blue #00aeec, gray text and fills) on white, and its dark theme for dark.
+     Pink and the filled blue fail 4.5:1 as text on white, so they mark (underlines, dots, borders, fills); text uses --link and --text*. */
+  /* One color, one meaning: accent = where you are, action = next step (one filled button per view), link = blue text, ok = keep,
+     danger = delete and errors you must act on (not logged in, AI not set up, a write failed),
+     warn = waits, things to confirm and notices that do not block (a countdown, a partial load), gray = everything else. */
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --surface-muted: #f6f7f8;
+  --field-bg: #f1f2f3;
+  --border: #e3e5e7;
+  --border-strong: #c9ccd0;
+  --text: #18191c;
+  --text-2: #61666d;
+  --muted: #61666d;
+  --faint: #6d7279;
+  --accent: #ff6699;
+  --on-accent: #ffffff;
+  --focus-ring: rgba(255, 102, 153, 0.3);
+  --action: #00aeec;
+  --action-hover: #0098ce;
+  --on-action: #ffffff;
+  --action-bg: #e3f6fd;
+  --action-border: #a6e2f7;
+  --link: #0079ad;
+  --link-hover: #006a98;
+  --ok: #3a6f2e;
+  --ok-bg: #edf4eb;
+  --ok-border: #c0d8ba;
+  --danger: #b52a48;
+  --danger-bg: #f9eef0;
+  --danger-border: #e9bfc8;
+  --warn: #a04b1a;
+  --warn-bg: #f8f1e7;
+  --warn-border: #e7d0af;
+  --info-bg: #f6f7f8;
+  --info-border: #e3e5e7;
+  --secondary-bg: #f1f2f3;
+  --secondary-border: #e3e5e7;
+  --secondary-text: #18191c;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  /* Pills: only for status (what is running, a sync notice) and filter or prompt chips; buttons and cards use the radii above. */
+  --radius-pill: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 15px;
+  --fs-xl: 19px;
+  --fs-2xl: 24px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Helvetica Neue",
+    Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --surface: #232527;
+    --surface-muted: #1d1e20;
+    --field-bg: #2f3134;
+    --border: #2f3134;
+    --border-strong: #3d4045;
+    --text: #e3e5e7;
+    --text-2: #a2a7ae;
+    --muted: #a2a7ae;
+    --faint: #8a8f96;
+    --accent: #ff6699;
+    --on-accent: #ffffff;
+    --focus-ring: rgba(255, 102, 153, 0.35);
+    --action: #00aeec;
+    --action-hover: #33bef0;
+    --on-action: #ffffff;
+    --action-bg: #10303d;
+    --action-border: #1d5a73;
+    --link: #33bef0;
+    --link-hover: #66cef4;
+    --ok: #a6e3a1;
+    --ok-bg: #233026;
+    --ok-border: #3d5a43;
+    --danger: #f38ba8;
+    --danger-bg: #3a2329;
+    --danger-border: #6a3a47;
+    --warn: #fab387;
+    --warn-bg: #3a2e24;
+    --warn-border: #6b5440;
+    --info-bg: #1d1e20;
+    --info-border: #3d4045;
+    --secondary-bg: #2f3134;
+    --secondary-border: #3d4045;
+    --secondary-text: #e3e5e7;
+  }
+}
+
+/* Base buttons for every page: gray by default; .primary = the one blue next step, .ok/.danger = keep/delete, .link = text. Pages only add size/layout. */
+button {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+button:hover { background: var(--surface-muted); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.primary { background: var(--action); border-color: var(--action); color: var(--on-action); font-weight: 600; }
+button.primary:hover { background: var(--action-hover); border-color: var(--action-hover); }
+button.ok.solid { background: var(--ok); border-color: var(--ok); color: var(--surface); font-weight: 600; }
+button.danger { color: var(--danger); border-color: var(--danger-border); background: var(--danger-bg); }
+button.danger.solid { background: var(--danger); border-color: var(--danger); color: var(--surface); font-weight: 600; }
+button.link { border: 0; background: none; color: var(--link); padding: 0; }
+button.link:hover { color: var(--link-hover); text-decoration: underline; }
+
+:where(input, select, textarea, button, summary, a):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Obsidian's official mark, used unmodified as the brand page asks; marks every Obsidian action. */
+.obsidian-mark {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  vertical-align: -2px;
+}
+
+/* On a filled accent button the purple mark disappears; the brand allows an all-white mark there. */
+.primary .obsidian-mark {
+  filter: brightness(0) invert(1);
+}
+
+/* Marks every control that starts an AI request; painted in the button's text color. */
+.ai-spark {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex: none;
+  margin-right: 0.25em;
+  vertical-align: -0.125em;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1C12 7 17 12 23 12C17 12 12 17 12 23C12 17 7 12 1 12C7 12 12 7 12 1Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+:where(input[type="text"], input[type="password"], input[type="number"], select, textarea):focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* Busy: set aria-busy="true" on whatever is working (a button, a status line); a button is also disabled and may say 「…中」. */
+[aria-busy="true"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 6px;
+  vertical-align: -0.12em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: busy-spin 0.8s linear infinite;
+}
+button[aria-busy="true"]:disabled { opacity: 0.7; cursor: progress; }
+.status[aria-busy="true"] { color: var(--text-2); background: var(--surface-muted); border-color: var(--border); }
+@keyframes busy-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  [aria-busy="true"]::before { animation: none; border-right-color: currentColor; opacity: 0.5; }
+}
+
+/* The bunny-eared 月团 silhouette (docs/design/icon-v4-bunny), painted in the current text color; pages set color and size. */
+.brand-mark {
+  display: inline-block;
+  width: 1.1em;
+  height: 1em;
+  flex: none;
+  vertical-align: -0.125em;
+  color: var(--accent);
+  background: currentColor;
+  mask: url("icons/moondigest-mark.svg") center / contain no-repeat;
+}
+
+/* BocOverwriteDialog (download.js): the form fills the dialog, so a click on the dialog itself is the backdrop. */
+dialog.boc-overwrite { padding: 0; max-width: 360px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); color: var(--text); }
+dialog.boc-overwrite::backdrop { background: rgba(17, 24, 39, 0.28); }
+dialog.boc-overwrite form { padding: 16px; }
+dialog.boc-overwrite h2 { margin: 0 0 8px; font-size: var(--fs-lg); }
+dialog.boc-overwrite p { margin: 0 0 8px; color: var(--text-2); font-size: var(--fs-sm); }
+dialog.boc-overwrite code { display: block; color: var(--text-2); font-size: var(--fs-xs); word-break: break-all; }
+dialog.boc-overwrite .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+
+/* Settings that are on or off: a checkbox drawn as a slider, still focusable and toggled with Space. */
+input.switch {
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--border-strong);
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+input.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.16s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+input.switch:checked {
+  background: var(--action);
+}
+
+input.switch:checked::after {
+  transform: translateX(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  input.switch,
+  input.switch::after {
+    transition: none;
+  }
+}

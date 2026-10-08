@@ -1,0 +1,47 @@
+/* #settings, after MoonDigest options.css: one white card per section on the gray page, one row per setting with the
+   name and hint on the left and the control on the right, a save bar fixed to the bottom while there are edits. */
+.opt { max-width: 760px; margin: 0 auto 72px; display: flex; flex-direction: column; gap: 16px; font-size: var(--fs-md); line-height: 1.6; }
+.opt .noai { margin: 0; padding: 12px 16px; border-radius: var(--radius-lg); background: var(--surface); color: var(--text-2); font-size: var(--fs-sm); }
+.opt .sec { padding: 20px 24px 6px; border-radius: var(--radius-lg); background: var(--surface); }
+.opt .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding-bottom: 4px; }
+.opt .sec-head h2 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.5; }
+.opt .sec-head p { flex: 1 1 240px; margin: 0; color: var(--faint); font-size: var(--fs-sm); }
+.opt .sec-head .pill { margin-left: auto; align-self: center; }
+.opt .row { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 24px; align-items: center; padding: 16px 0; border-top: 1px solid var(--border); }
+.opt .rows > .row:first-child { border-top: 0; }
+.opt .row:has(> .ctl > .switch) { grid-template-columns: minmax(0, 1fr) auto; }
+.opt .row.wide { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.opt .ctl { display: flex; align-items: center; gap: 8px; color: var(--text-2); font-size: var(--fs-sm); }
+.opt .ctl:has(> .switch) { justify-self: end; }
+.opt .name { font-weight: 500; color: var(--text); }
+.opt .hint { margin: 2px 0 0; color: var(--faint); font-size: var(--fs-sm); line-height: 1.55; }
+.opt .ctl :is(input[type="text"], input[type="password"], input[type="url"]) { width: 100%; min-width: 0; height: 34px; box-sizing: border-box; padding: 0 10px; border-color: transparent; }
+.opt .ctl input[type="number"] { width: 72px; height: 34px; box-sizing: border-box; padding: 0 8px; border-color: transparent; }
+.opt .ctl input:focus-visible { outline: 2px solid var(--action); outline-offset: -1px; }
+.opt .mix { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; }
+.opt .mix input { width: 100%; accent-color: var(--action); }
+.opt .mix .hint { margin: 0; }
+.opt .warn { margin: 0 0 14px; color: var(--warn); font-size: var(--fs-sm); }
+.opt .warn:empty { display: none; }
+.opt #aiStatus.ok { color: var(--ok); }
+.opt #aiStatus.err { color: var(--danger); }
+.opt .pill { display: inline-flex; align-items: center; font-size: var(--fs-xs); line-height: 20px; padding: 0 8px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface-muted); color: var(--text-2); white-space: nowrap; }
+.opt .pill.ok { color: var(--ok); background: var(--ok-bg); border-color: var(--ok-border); }
+.opt .pill.off { color: var(--muted); }
+
+/* Save bar: amber while there are edits, then green (saved) or red (could not save). */
+.savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; border-top: 1px solid var(--warn-border); background: var(--warn-bg); }
+.savebar:has(#unsaved[hidden]) { border-color: var(--ok-border); background: var(--ok-bg); }
+.savebar:has(#unsaved[hidden]):has(.status[data-error="true"]) { border-color: var(--danger-border); background: var(--danger-bg); }
+.savebar-in { width: min(760px, 100% - 32px); min-height: 56px; margin: 0 auto; display: flex; align-items: center; justify-content: flex-end; gap: 16px; font-size: var(--fs-sm); }
+.savebar .status { flex: 1; margin: 0; color: var(--ok); }
+.savebar .status:empty { display: none; }
+.savebar .status[data-error="true"] { color: var(--danger); }
+.savebar .unsaved { flex: 1; color: var(--warn); }
+.savebar .unsaved .where { color: var(--text-2); }
+
+@media (max-width: 760px) {
+  .opt .sec { padding: 16px 16px 4px; }
+  .opt .row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .opt .row:has(> .ctl > .switch) { grid-template-columns: minmax(0, 1fr) auto; }
+}

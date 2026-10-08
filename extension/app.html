@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>B站社交圈</title>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="app.css" />
+    <!-- Page stylesheets go here (one line per agent). -->
+    <link rel="stylesheet" href="pages/graph.css" />
+    <link rel="stylesheet" href="pages/me.css" />
+    <link rel="stylesheet" href="pages/follow.css" />
+    <link rel="stylesheet" href="pages/feed.css" />
+    <link rel="stylesheet" href="pages/settings.css" />
+  </head>
+  <body>
+    <!-- app.js builds the top bar and the page area; keep dev/index.html's script list in step with this one. -->
+    <script src="app.js"></script>
+    <!-- Shared libraries for pages go here, before the page scripts (e.g. vendor/d3.min.js, lib/graph.js). -->
+    <script src="vendor/d3.min.js"></script>
+    <script src="lib/graph.js"></script>
+    <script src="lib/me.js"></script>
+    <script src="pages/follow.js"></script>
+    <script src="pages/fans.js"></script>
+    <script src="pages/graph.js"></script>
+    <script src="pages/me.js"></script>
+    <script src="pages/settings.js"></script>
+    <script src="pages/feed.js"></script>
+  </body>
+</html>

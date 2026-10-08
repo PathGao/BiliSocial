@@ -1,0 +1,71 @@
+/* #me 我的位置 */
+.me { display: flex; flex-direction: column; gap: 16px; }
+.me a { color: inherit; text-decoration: none; }
+.me a:hover { color: var(--link); }
+.me h1 { margin: 0; font-size: var(--fs-xl); }
+.me h2 { margin: 0; font-size: var(--fs-lg); }
+
+.me-head { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border); }
+.me-counts { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 4px; color: var(--text-2); }
+.me-counts b { color: var(--text); font-size: var(--fs-lg); font-variant-numeric: tabular-nums; }
+.me-sync { margin-left: auto; font-size: var(--fs-xs); }
+
+.me-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+/* 助力 and 我在圈子里的位置 side by side at the same height; the 助力 list scrolls inside its card. */
+.me-pair { height: 680px; display: flex; flex-direction: column; min-height: 0; }
+/* 常互动: fixed card height, the list scrolls inside and loads the next batch at its bottom. */
+.me-fixed { height: 640px; display: flex; flex-direction: column; min-height: 0; margin-top: 16px; }
+.me-scroll { flex: 1; min-height: 0; overflow-y: auto; margin: 0 -20px; padding: 0 20px; overscroll-behavior: contain; }
+.me-foot { margin: 8px 0 4px; text-align: center; font-size: var(--fs-xs); }
+.me-pair .ego { flex: 1; min-height: 0; max-height: 100%; }
+.me-card { padding: 16px 20px; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border); }
+.me-card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.me-hint { margin: 4px 0 8px; font-size: var(--fs-xs); }
+
+.me-list { list-style: none; margin: 0; padding: 0; }
+.me-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; }
+.me-row + .me-row { border-top: 1px solid var(--border); }
+.me-main { flex: 1; min-width: 0; }
+.me-name { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.me-did { margin-top: 2px; color: var(--text-2); }
+.me-did a { color: var(--link); }
+.me-tag { padding: 0 6px; border-radius: var(--radius-pill); background: var(--field-bg); color: var(--text-2); font-size: var(--fs-xs); font-weight: 400; }
+.me-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.me-chip { padding: 1px 8px; border-radius: var(--radius-pill); background: var(--field-bg); color: var(--text-2); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.me-dates { flex: none; text-align: right; font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+
+.me-filters { display: flex; gap: 4px; }
+.me-filters button { height: 26px; padding: 0 10px; border-radius: var(--radius-pill); font-size: var(--fs-xs); }
+.me-filters button[aria-pressed="true"] { border-color: var(--accent); color: var(--text); font-weight: 600; }
+.me-more { margin-top: 8px; width: 100%; }
+
+.me-empty { padding: 40px 0; text-align: center; color: var(--muted); }
+.me-empty p { margin: 0 0 12px; }
+
+/* Ego graph: 转发过我 = solid pink (the user's explicit exception to one-color-one-meaning, 2026-10-08),
+   有私信 = dashed mid-gray, 其他 = light gray. 「我」 in the middle is pink too. */
+.ego-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 4px 0 8px; font-size: var(--fs-xs); }
+.ego-legend span[class]::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 4px; border: 2px solid var(--c); border-radius: 50%; background: var(--c); vertical-align: -1px; }
+.ego-legend span.pm::before { border-style: dashed; background: none; }
+.me .help { --c: var(--accent); }
+.me .pm { --c: var(--text-2); }
+.me .plain { --c: var(--border-strong); }
+.ego line.pm { stroke-dasharray: 1.2 0.8; }
+.ego-node.pm { box-shadow: 0 0 0 2px var(--surface); outline: 2px dashed var(--c); outline-offset: 2px; }
+.ego { position: relative; aspect-ratio: 1; max-width: 560px; margin: 0 auto; }
+.ego svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ego line { stroke: var(--c); stroke-linecap: round; opacity: 0.55; }
+.ego-node { position: absolute; transform: translate(-50%, -50%); display: block; line-height: 0; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--c); }
+.ego-node:hover { z-index: 1; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--c), 0 2px 8px rgba(0, 0, 0, 0.25); }
+.ego-node.ego-me { --c: var(--accent); z-index: 2; }
+
+@media (max-width: 860px) {
+  .me-grid { grid-template-columns: minmax(0, 1fr); }
+  .me-pair { height: auto; }
+  .me-pair .me-scroll { max-height: 560px; }
+  .me-head { flex-wrap: wrap; }
+  .me-sync { margin-left: 0; width: 100%; }
+}
+.me-status { margin: 4px 0 8px; font-size: var(--fs-xs); color: var(--text-2); }
+.me-status button { height: 22px; padding: 0 8px; margin-left: 6px; font-size: var(--fs-xs); }
+.me-empty .me-status { font-size: var(--fs-sm); }

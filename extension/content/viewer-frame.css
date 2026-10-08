@@ -1,0 +1,24 @@
+/* The #feed viewer's iframe (marked by viewer-frame.js): no site header, no recommendations column, no side buttons. */
+html[data-bs-viewer] #biliMainHeader,
+html[data-bs-viewer] .right-container,
+html[data-bs-viewer] .fixed-sidenav-storage {
+  display: none !important;
+}
+
+html[data-bs-viewer] #app {
+  min-width: 0 !important;
+}
+
+html[data-bs-viewer] .left-container {
+  width: auto !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+  padding: 0 16px !important;
+}
+
+html[data-bs-viewer] #playerWrap,
+html[data-bs-viewer] #bilibili-player {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+}

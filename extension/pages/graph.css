@@ -1,0 +1,173 @@
+/* #graph 关系图 as an atlas: the map fills the page under the top bar; search, view and legend float in the corners;
+   the 圈子 / 可能想关注 list opens on the left and a person's detail on the right (bottom sheets under 720px). */
+.view:has(> .gp) { max-width: none; padding: 0; }
+.gp {
+  --edge: rgba(60, 60, 70, 0.10);
+  --edge-hi: rgba(30, 30, 40, 0.55);
+  --map-dark: 0; /* read by graph.js to pick the territory tint */
+  --float: color-mix(in srgb, var(--surface) 92%, transparent);
+  --lift: 0 2px 10px rgba(0, 0, 0, 0.08);
+  --lift-hi: 0 8px 28px rgba(0, 0, 0, 0.14);
+  height: calc(100vh - 56px);
+}
+@media (prefers-color-scheme: dark) {
+  .gp {
+    --edge: rgba(220, 220, 230, 0.08);
+    --edge-hi: rgba(240, 240, 250, 0.6);
+    --map-dark: 1;
+    --lift: 0 2px 10px rgba(0, 0, 0, 0.4);
+    --lift-hi: 0 8px 28px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.gp-stage { position: relative; height: 100%; overflow: clip; background: var(--bg); }
+.gp-stage canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.gp-3d { position: absolute; inset: 0; }
+.gp-tip { position: absolute; z-index: 6; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 10px; font-size: var(--fs-xs); box-shadow: var(--lift); max-width: 260px; }
+.gp-loading { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; color: var(--muted); background: var(--bg); }
+/* 以 TA 为中心: a row under the chips saying whose map this is, with the way back */
+.gp-bar { display: flex; align-items: center; gap: 10px; padding: 6px 10px 6px 6px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--lift); font-size: var(--fs-xs); color: var(--text-2); }
+.gp-bar[hidden] { display: none; }
+.gp-bar button { height: 28px; }
+.gp-stage:has(.gp-bar:not([hidden])) .gp-list { top: 160px; }
+.gp-bar button { flex: none; }
+.gp-bar span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- corners ---------- */
+.gp-fl { position: absolute; z-index: 3; }
+.gp-tl { top: 16px; left: 16px; width: 340px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.gp-search { height: 38px; padding: 0 14px; border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--lift); }
+.gp-chips { display: flex; gap: 8px; }
+.gp-chips button { height: 30px; border-radius: var(--radius-pill); background: var(--surface); box-shadow: var(--lift); }
+.gp-chips small { color: var(--faint); font-variant-numeric: tabular-nums; }
+.gp-chips button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.gp-tr { top: 16px; right: 16px; display: flex; align-items: center; gap: 8px; }
+.gp-stale { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 10px; border: 1px solid var(--warn-border); border-radius: var(--radius-pill); background: var(--warn-bg); color: var(--text-2); font-size: var(--fs-xs); }
+.gp-stale[hidden] { display: none; }
+.gp-seg { display: inline-flex; box-shadow: var(--lift); border-radius: var(--radius-sm); }
+.gp-seg button { height: 30px; padding: 0 12px; border-radius: 0; background: var(--surface); }
+.gp-seg button:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.gp-seg button:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin-left: -1px; }
+.gp-seg button[aria-pressed="true"] { color: var(--text); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.gp-show { position: relative; }
+.gp-show summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); box-shadow: var(--lift); cursor: pointer; }
+.gp-show summary::-webkit-details-marker { display: none; }
+.gp-show summary::after { content: ""; border: 4px solid transparent; border-top: 5px solid currentColor; border-bottom: 0; opacity: .7; }
+.gp-menu { position: absolute; top: 36px; right: 0; display: grid; gap: 10px; min-width: 200px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--lift-hi); transform-origin: top right; animation: gp-pop .18s ease-out; }
+.gp-menu label { display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; }
+@keyframes gp-pop { from { opacity: 0; transform: scale(.96); } }
+.gp-bl { left: 16px; bottom: 16px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--float); }
+.gp-alpha { display: flex; align-items: center; gap: 8px; font-size: var(--fs-xs); color: var(--text-2); white-space: nowrap; }
+.gp-alpha input { width: 120px; padding: 0; border: 0; background: none; accent-color: var(--action); }
+.gp-br { right: 16px; bottom: 16px; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 4px 14px; max-width: calc(100% - 360px); padding: 8px 12px; border-radius: var(--radius-md); background: var(--float); font-size: var(--fs-xs); color: var(--text-2); }
+.gp-br span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+i.dot, i.ring { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--c, var(--text-2)); }
+i.ring { background: none; border: 2px solid var(--c, var(--text-2)); }
+
+/* ---------- panels: slide in from their own side ---------- */
+.gp-panel {
+  position: absolute; z-index: 5; display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--lift-hi);
+  transition: transform .28s cubic-bezier(.2, .8, .3, 1), opacity .2s ease, visibility 0s .28s;
+}
+.gp-panel:not(.open) { opacity: 0; visibility: hidden; pointer-events: none; transition: transform .18s ease-in, opacity .16s ease-in, visibility 0s .18s; }
+.gp-panel.open { transition-delay: 0s; }
+.gp-list { top: 108px; left: 16px; bottom: 16px; width: 340px; }
+.gp-list:not(.open) { transform: translateX(-24px); }
+.gp-detail { top: 16px; right: 16px; bottom: 16px; width: 340px; overflow: auto; padding: 16px; display: block; }
+.gp-detail:not(.open) { transform: translateX(24px); }
+.gp-x { position: absolute; top: 10px; right: 12px; height: auto; color: var(--muted); font-size: var(--fs-md); }
+.gp-x:hover { color: var(--text); text-decoration: none; }
+/* the corners the open detail would cover move to its left */
+.gp-stage:has(.gp-detail.open) .gp-tr, .gp-stage:has(.gp-detail.open) .gp-br { right: 372px; transition: right .28s cubic-bezier(.2, .8, .3, 1); }
+.gp-stage:has(.gp-list.open) .gp-bl { left: 372px; }
+.gp-tr, .gp-br, .gp-bl { transition: right .18s ease-in, left .18s ease-in; }
+
+.gp-tabs { position: relative; display: flex; gap: 20px; padding: 0 16px; border-bottom: 1px solid var(--border); flex: none; }
+.gp-tabs [role="tab"] { position: relative; height: 42px; padding: 0; border: 0; background: none; color: var(--text-2); }
+.gp-tabs [role="tab"][aria-selected="true"] { color: var(--text); font-weight: 600; }
+.gp-tabs [role="tab"][aria-selected="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; border-radius: 2px; background: var(--accent); }
+.gp-tabs .gp-x { top: 12px; }
+.gp-scroll { flex: 1; overflow: auto; padding-bottom: 8px; }
+.gp-sec { padding: 12px 16px 6px; font-size: var(--fs-xs); color: var(--muted); }
+.gp-sec p { margin: 0; }
+.gp-ainame { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.gp-ainame button { height: 28px; flex: none; }
+
+.gp-grp { display: grid; grid-template-columns: auto minmax(0, 1fr) auto 18px; gap: 10px; align-items: start; padding: 7px 12px 7px 16px; cursor: pointer; }
+.gp-grp:hover { background: var(--field-bg); }
+.gp-grp.on { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); box-shadow: inset 3px 0 0 var(--accent); }
+.gp-grp b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gp-grp small { display: block; color: var(--muted); font-size: var(--fs-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gp-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; }
+.gp-num { padding-top: 1px; color: var(--text-2); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.gp-rename { height: auto; padding: 0 2px; color: var(--muted); visibility: hidden; }
+.gp-grp:hover .gp-rename, .gp-rename:focus-visible { visibility: visible; }
+@media (hover: none) { .gp-rename { visibility: visible; } }
+
+.gp-rec { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; padding: 8px 16px; cursor: pointer; }
+.gp-rec:hover { background: var(--field-bg); }
+/* 你还没关注 = a ring in the 圈子 color, the same mark as on the map */
+.gp-rec .avatar { grid-row: 1 / span 2; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--c); }
+.gp-rec .nm { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gp-rec .nm small { font-weight: 400; color: var(--muted); margin-left: 6px; }
+.gp-rec .why { grid-column: 2; color: var(--text-2); font-size: var(--fs-xs); }
+.gp-rec button { grid-column: 3; grid-row: 1 / span 2; height: 28px; }
+.gp-rec.gone { opacity: 0.65; }
+.gp-tag { display: inline-block; padding: 0 6px; border-radius: var(--radius-pill); background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); font-size: 11px; font-weight: 400; margin-left: 6px; }
+
+/* ---------- detail ---------- */
+.gp-detail .who { display: flex; gap: 12px; align-items: center; padding-right: 20px; }
+.gp-detail .who a { color: var(--link); text-decoration: none; font-weight: 600; font-size: var(--fs-lg); }
+.gp-detail .meta { color: var(--text-2); font-size: var(--fs-xs); margin-top: 4px; }
+.gp-detail .meta.grp { display: flex; align-items: center; gap: 6px; margin-top: 12px; color: var(--text); font-size: var(--fs-sm); }
+.gp-detail .meta.grp .muted { margin-left: 2px; font-size: var(--fs-xs); }
+.gp-acts { display: flex; gap: 8px; margin-top: 12px; }
+.gp-detail .sign { color: var(--muted); font-size: var(--fs-xs); margin: 8px 0 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.gp-detail h4 { margin: 16px 0 4px; font-size: var(--fs-xs); font-weight: 600; color: var(--text-2); }
+.gp-detail h4 small { font-weight: 400; color: var(--faint); }
+.gp-detail ul { list-style: none; margin: 0; padding: 0; }
+.gp-detail li { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; }
+.gp-detail li span:first-of-type { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gp-detail li:hover { color: var(--link); }
+.gp-detail li.none { color: var(--muted); cursor: default; }
+.gp-detail li .bar { margin-left: auto; width: 64px; height: 4px; border-radius: 2px; background: var(--field-bg); flex: none; }
+.gp-detail li .bar b { display: block; height: 100%; border-radius: 2px; background: var(--text-2); }
+
+/* ---------- 3D 圈子 names ---------- */
+.gp-3dlabels { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.gp-3dlabels span { position: absolute; left: 0; top: 0; font-weight: 700; font-size: 14px; letter-spacing: 1px; white-space: nowrap; text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 6px var(--bg); transition: opacity .15s; }
+.gp-3dlabels span.dim { opacity: .15; }
+
+/* ---------- empty / waiting ---------- */
+.gp-empty { max-width: 460px; margin: 80px auto; text-align: center; color: var(--text-2); }
+.gp-empty h2 { color: var(--text); font-size: var(--fs-xl); margin: 0 0 8px; }
+.gp-empty p { margin: 0 0 16px; }
+.gp-need { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 10px; text-align: left; }
+.gp-need button { margin-left: 8px; }
+
+@media (max-width: 1200px) {
+  .gp-stage:has(.gp-detail.open) .gp-br { display: none; }
+}
+@media (max-width: 900px) {
+  .gp-list, .gp-detail { width: 300px; }
+  .gp-tl { width: 300px; }
+  .gp-stage:has(.gp-detail.open) .gp-tr { right: 332px; }
+  .gp-stage:has(.gp-list.open) .gp-bl { left: 332px; }
+}
+/* Narrow: search across the top, controls on the chips row, panels as bottom sheets (one at a time). */
+@media (max-width: 720px) {
+  .gp-tl { left: 12px; right: 12px; top: 12px; width: auto; }
+  .gp-tr { top: 58px; right: 12px; }
+  .gp-stage:has(.gp-detail.open) .gp-tr { right: 12px; }
+  .gp-bl { left: 12px; bottom: 12px; }
+  .gp-br { right: 12px; bottom: 56px; max-width: none; padding: 4px 8px; }
+  .gp-stage:has(.gp-list.open) .gp-bl { left: 12px; }
+  .gp-list, .gp-detail { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; height: 46%; }
+  .gp-list:not(.open), .gp-detail:not(.open) { transform: translateY(24px); }
+  .gp-alpha input { width: 90px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gp-panel, .gp-panel:not(.open), .gp-tr, .gp-br, .gp-bl { transition: none; }
+  .gp-menu { animation: none; }
+}
